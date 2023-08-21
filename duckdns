@@ -1,4 +1,5 @@
-Configuración DockerCompose duckdns
+# Configuración DockerCompose duckdns
+# Contenido del fichero docker-compose.yaml
 
 version: "2.1"
 services:
@@ -13,5 +14,9 @@ services:
       - TOKEN=e7db2910-923a-4ed2-9e04-af43831e816e # Tocken que te asigna duckdns.org 
       - LOG_FILE=false #optional
     volumes:
-      - /path/to/appdata/config:/config #optional   # Directorio persistente local para el direcotiro de configuración de Duckdns
+      - /home/fernando/Documents/ProyectoWeb/DuckDNS/config:/config #optional   # Directorio persistente local para el direcotiro de configuración de Duckdns
     restart: unless-stopped
+
+# Para levantar el servicio
+sudo docker-compose up -d duckdns && sudo docker logs -f duckdns
+# Levanta el servicio exclusivo que le decimos del docker-compose.yaml
