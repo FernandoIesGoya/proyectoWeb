@@ -1,4 +1,4 @@
-# INSTALACIÓN SIMPLE
+# INSTALACIÓN SIMPLE UN CONTENEDOR
 version: "3"
 
 services:
@@ -8,6 +8,33 @@ services:
             - 8000:80
         volumes:
             - ./src:/usr/share/nginx/html
+
+
+# INSTALACIÓN SIMPLE DOS CONTENEDORES
+
+version: "3"
+services:
+    client1:
+        image: nginx
+        container_name: webserver1
+        restart: unless-stopped
+        ports:
+            - 8000:80
+        volumes:
+            - ./src:/usr/share/nginx/html
+        image: nginx
+        container_name: webserver2
+        restart: unless-stopped
+        ports:
+            - 8000:80
+        volumes:
+            - ./src:/usr/share/nginx/html
+
+
+
+
+
+
 
 
 
