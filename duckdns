@@ -1,1 +1,17 @@
-Configuración duckdns
+Configuración DockerCompose duckdns
+
+version: "2.1"
+services:
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    environment:
+      - PUID=1000 #optional
+      - PGID=1000 #optional
+      - TZ= Europe/Madrid
+      - SUBDOMAINS=fernandorm,    # Subdominio creado en duckdns.org 
+      - TOKEN=e7db2910-923a-4ed2-9e04-af43831e816e # Tocken que te asigna duckdns.org 
+      - LOG_FILE=false #optional
+    volumes:
+      - /path/to/appdata/config:/config #optional   # Directorio persistente local para el direcotiro de configuración de Duckdns
+    restart: unless-stopped
