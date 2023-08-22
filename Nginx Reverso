@@ -1,0 +1,16 @@
+# CONFIGURACIÓN NGINX REVERSO
+# FICHERO /etc/nginx/sites-available/iesgoya.io                                                
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name iesgoya.io  www.iesgoya.io;
+
+    location / {
+        proxy_pass http://172.21.0.3;   # CONTENEDOR DOCKER. PARA ELLO HE PUESTO UN INTERFAZ DE LA MÁQUINA VIRTUAL EN MODO PUENTE,
+                                        # LE HE ASIGNADO LA RED DE DOCKER Y CONFIGURADO UNA IP MANUALMENTE DENTRO DE ESE RANGO.
+        include proxy_params;
+    }
+}
+
+
