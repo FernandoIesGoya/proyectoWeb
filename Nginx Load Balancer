@@ -1,0 +1,15 @@
+upstream mywebapp1 {
+    server 172.21.0.3;
+    server 172.21.0.2;
+}
+
+server {
+    server_name iesgoya.io  www.iesgoya.io;
+    location / {
+        proxy_pass http://mywebapp1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
