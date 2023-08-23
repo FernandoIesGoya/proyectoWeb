@@ -1,0 +1,71 @@
+# CONFIGURACIÓN CONTENEDOR DNS
+
+# Fichero docker-compose.yaml
+
+version: '3'
+services:
+  bind9:
+    container_name: Mi-Dns
+    image: ubuntu/bind9
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "127.0.0.1:953:953/tcp"
+    volumes:
+      - ./config/named.conf.options:/etc/bind/named.conf.options
+      - ./config/named.conf.local:/etc/bind/named.conf.local
+      - ./config/db.iesgoya.io:/etc/bind/db.iesgoya.io
+    restart: unless-stopped
+
+# Fichero named.conf.options
+options {
+	directory "/var/cache/bind";
+	recursion yes;# Permito consultas recursivas
+	allow-query {any; };# Permito a que equipos hacer consultas
+	allow-recursion {any;}; # Permito a que equipos hacer consultas recursivas
+	allow-query-cache{any;}; # Permito a que equipos hacer consultas a la cache
+        listen-on {any;};   
+	forwarders {
+	 	8.8.8.8;
+        8.8.4.4;
+	};
+
+	dnssec-validation no;
+	listen-on-v6 { any; };
+};
+
+# Fichero named.conf.local
+zone iesgoya.io {
+   type master;
+   file "/etc/bind/db.iesgoya.io"; # zone file path
+};
+# Faltaría zona inversa asociada a las ip  de la red de Docker.
+
+# Fichero db.iesgoya.io
+$TTL	604800
+@	IN	SOA	iesgoya.io. admin.iesgoya.io. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+    IN  NS ns1.iesgoya.io.
+
+;Registros de equipos
+ns1.iesgoya.io.         IN             A           10.0.1.10
+serWeb                  IN             A           10.0.1.13
+www                     IN             CNAME       serWeb
+
+
+# AL EJECUTAR EL CONTENEDOR DA ERROR. SOLUCIÓN.
+# Al ejecutar el contendor da error porque el puerto 53 ya se ocupado por el servicio 
+# systemd-resolved del propio host. Es el servicio propio del host que es el que se 
+# relaciona con los servidores que tenemos configurados y nos proporciona los DNS.
+# Para solucionarlo podemos utilizar algunos de estos dos comanados:
+systemctl deshabilitar systemd-resolved.service
+systemctl stop systemd-resuelto
+# Ahora el puerto 53  esta abierto, pero no hay ningún DNS configurado para su host.
+Para solucionarlo, debe editar '/etc/resolv.conf' y agregar la dirección dns. 
+
+127.0.0.1   # Para que sea el contenedor nuestro quien resuelva las peticiones.
